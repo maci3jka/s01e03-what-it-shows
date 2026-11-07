@@ -1,0 +1,66 @@
+---
+layout: runbook
+title: '#4471 · what the reports show'
+owner: maci3jka
+status: living
+reviewed: 2026-11-07
+signature: maci3jka
+---
+
+<script>
+  import ProblemSplit from '#lib/kb/ProblemSplit.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const repo = 'https://github.com/maci3jka/s01e03-what-it-shows/issues/';
+  const issues = { parser: repo + '1', hint: repo + '2', 'one-day move': repo + '3' };
+</script>
+
+The [#4471 page](/kb/incidents/4471) says the ticket is one issue with one fix queued. The reports
+merged into it do not say that. Read by tenant, not by subject, they are three problems, and the
+queued fix closes only the first one.
+
+<ProblemSplit ticket={4471} {issues} />
+
+<Callout kind="warn">
+#4471 is not known. Two of its three problems have no fix queued. Each one now has its own ticket.
+</Callout>
+
+## parser
+
+The shared parser reads every date month first. Every tenant on file writes the day first, so a
+booked date comes back with day and month swapped: "Our 7 April reminder went out on 4 July". This
+is the bug #4471 describes, and the fix that is queued.
+
+## hint
+
+The booking-v3 form prints `MM/DD/YYYY` under its date field. People at day-first tenants type
+what the hint tells them, month first, and the form reads it the tenant's way. The date comes out
+swapped too, so the reports look the same, but the parser fix does not touch the form. Only
+reports sent through the form of a booking-v3 tenant have this cause.
+
+Intake tags reports `hint` or `parser` from the reporter's browser. The cause depends on the
+tenant, so the tag is wrong on many reports in both groups. Do not triage by the tag.
+
+## one-day move
+
+Some dates do not swap. They move back one day: "Client in Lisbon got Tuesday. Client in Toronto
+got Monday. Same meeting." A month-first parse cannot do that. It looks like a date stored as an
+instant and shown in the reader's time zone. These are the reports in the desk's own
+`oneDayMove` list. The cause table below files them under `parser`, with a footnote. They are a
+separate bug.
+
+## Why one ticket hid three
+
+[Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges reports when their subject lines
+match. A subject says "wrong date". It does not say which tenant, form or channel the date came
+through, and that is where the cause is. Merging on subject put three causes in one ticket and
+marked it known. Decision 0001 is accepted, so it stays as written: a new decision record has to
+replace it.
+
+## The desk's cause table, for comparison
+
+<CauseTable ticket={4471} />
+
+<RenderStamp {signature} />
