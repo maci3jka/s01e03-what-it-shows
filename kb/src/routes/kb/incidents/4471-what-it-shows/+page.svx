@@ -4,7 +4,7 @@ title: '#4471 · what the reports show'
 owner: maci3jka
 status: living
 reviewed: 2026-11-07
-signature: maci3jka
+signature: 'v1.eyJzdWIiOiI0MjIiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5NDA2MDIzOCwiZXhwIjoxNzk0MTQ2NjM4fQ.BL72VA1HyEyEiVJDcb_DJ9_c6B83PhrHZ_drg7CCKM8'
 ---
 
 <script>
