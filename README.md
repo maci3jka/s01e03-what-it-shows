@@ -6,11 +6,11 @@ MEGA.dev S01E03. The support desk merged 412 date reports into ticket #4471 and 
 
 | issue | problem | reports |
 |---|---|---|
-| [#1](../../issues/1) | parser: dates read month first, day-first tenants get day and month swapped | 374 |
+| [#1](../../issues/1) | parser: dates read month first, day-first tenants get day and month swapped | 379 |
 | [#2](../../issues/2) | hint: booking-v3 form says `MM/DD/YYYY` to day-first tenants | 33 |
 | [#3](../../issues/3) | one-day move: dates shift back one day (time zone) | 5 |
 
-The counts are over unique report ids. The export holds 427 entries, and 15 of them are exact copies.
+The counts are over unique report ids, counted the desk's way (its CauseTable): the 5 one-day moves are also counted under parser. The export holds 427 entries, and 15 of them are exact copies.
 
 ## Page
 

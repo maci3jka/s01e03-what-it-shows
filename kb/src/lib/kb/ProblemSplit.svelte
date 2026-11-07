@@ -4,18 +4,22 @@
   import { causeOf, uniqueById, type Report } from '#lib/kb/causes';
   import { tenantOf } from '#lib/kb/locales';
 
-  // One row per problem in a merged ticket. A report's problem is its cause (causes.ts), except the
-  // reports the desk noted as a one-day move: no month-first parse moves a date by one day.
+  // One row per problem in a merged ticket, counted the desk's way (as CauseTable does): each report
+  // under its cause (causes.ts), plus the reports the desk noted as a one-day move. Those stay counted
+  // under their cause too, so the rows overlap by that many.
   let { ticket, issues }: { ticket: number; issues: Record<string, string> } = $props();
 
   const merged = $derived(uniqueById(reports as Report[]).filter((r) => r.mergedInto === ticket));
-  const problemOf = (r: Report) =>
-    notes.oneDayMove.includes(r.id) ? 'one-day move' : (causeOf(r, tenantOf(r)) ?? 'unplaced');
-  const rows = $derived(
-    Object.entries(
-      merged.reduce<Record<string, number>>((n, r) => ({ ...n, [problemOf(r)]: (n[problemOf(r)] ?? 0) + 1 }), {}),
+  const moved = $derived(merged.filter((r) => notes.oneDayMove.includes(r.id)).length);
+  const rows = $derived([
+    ...Object.entries(
+      merged.reduce<Record<string, number>>((n, r) => {
+        const c = causeOf(r, tenantOf(r)) ?? 'unplaced';
+        return { ...n, [c]: (n[c] ?? 0) + 1 };
+      }, {}),
     ).sort((a, b) => b[1] - a[1]),
-  );
+    ...(moved ? [['one-day move', moved] as [string, number]] : []),
+  ]);
 </script>
 
 <p class="sum">
@@ -35,8 +39,12 @@
     {/each}
   </tbody>
 </table>
+{#if moved}
+  <p class="note">The {moved} one-day moves are also counted under the cause their tenant files them under.</p>
+{/if}
 
 <style>
   .sum { font-size: 1.1rem; }
   .none { color: var(--warn); font-weight: 600; }
+  .note { color: var(--muted); font-size: 0.85em; }
 </style>
